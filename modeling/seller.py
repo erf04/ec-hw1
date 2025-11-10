@@ -31,16 +31,18 @@ class Seller:
 
     def compute_demand(self, competitors, influence_score):
         """
-        Computes the demand for this seller based on its own price and
-        advertising level, plus competitors' prices and social influence.
+        Computes demand using all competitors individually.
+        D_i = base_demand + alpha*ad_budget + beta*sum(price_i - price_j) + gamma*influence
         """
-        avg_competitor_price = np.mean([s.price for s in competitors if s.name != self.name])
+        price_diff_sum = sum(self.price - s.price for s in competitors if s.name != self.name)
+        
         self.demand = (
             self.base_demand
             + self.alpha * self.ad_budget
-            + self.beta * (self.price - avg_competitor_price)
+            + self.beta * price_diff_sum
             + self.gamma * influence_score
         )
+        
         self.demand = max(0, self.demand)  # Demand can't be negative
         return self.demand
 
@@ -72,6 +74,8 @@ class Seller:
         # try increasing/decreasing price
         for delta_p in [-step_price, 0, step_price]:
             for delta_a in [-step_ads, 0, step_ads]:
+                delta_p = min(max(delta_p, -0.1), 0.1)
+                delta_a = min(max(delta_a, -0.5), 0.5)
                 self.price += delta_p
                 self.ad_budget += delta_a
                 self.compute_demand(rivals, influence)
@@ -85,6 +89,9 @@ class Seller:
                 # revert temporarily
                 self.price -= delta_p
                 self.ad_budget -= delta_a
+
+            step_price *= 0.99
+            step_ads *= 0.99
         
         # apply best found
         changed = (self.price != best_price) or (self.ad_budget != best_ads)
@@ -106,8 +113,7 @@ def create_sellers_for_product(df: pd.DataFrame, description: str, max_sellers: 
     Returns a list of Seller objects.
     """
     product_sales = df[df["Description"] == description]
-    unique_prices = sorted(product_sales["Price"].unique())
-    # [:max_sellers]  # limit sellers
+    unique_prices = sorted(product_sales["Price"].unique())[:max_sellers]  # limit sellers
 
     sellers = [
         Seller(
