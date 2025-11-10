@@ -1,7 +1,10 @@
 import numpy as np
+from random import randint
+import pandas as pd
+from config.constants import COST,ALPHA,BETA,GAMMA,BASE_DEMAND
 
 class Seller:
-    def __init__(self, name, price, ad_budget, cost, alpha=0.5, beta=-2.0, gamma=1.0, base_demand=50):
+    def __init__(self, name, price, ad_budget, cost, alpha=ALPHA, beta=BETA, gamma=GAMMA, base_demand=BASE_DEMAND):
         """
         Represents a single seller (player) in the market.
 
@@ -48,5 +51,85 @@ class Seller:
         self.profit = (self.price - self.cost) * self.demand - self.ad_budget
         return self.profit
 
+    def info(self):
+        return {
+            "Seller": self.name,
+            "Price": self.price,
+            "Ads": self.ad_budget,
+            "Demand": round(self.demand, 2),
+            "Profit": round(self.profit, 2)
+        }
+    
+    def update_strategy(self, rivals, influence, step_price=0.5, step_ads=1):
+        """
+        Simple greedy update: try small changes in price and ads, pick the best profit.
+        Returns True if strategy changed.
+        """
+        best_profit = self.profit
+        best_price = self.price
+        best_ads = self.ad_budget
+        
+        # try increasing/decreasing price
+        for delta_p in [-step_price, 0, step_price]:
+            for delta_a in [-step_ads, 0, step_ads]:
+                self.price += delta_p
+                self.ad_budget += delta_a
+                self.compute_demand(rivals, influence)
+                self.compute_profit()
+                
+                if self.profit > best_profit:
+                    best_profit = self.profit
+                    best_price = self.price
+                    best_ads = self.ad_budget
+                
+                # revert temporarily
+                self.price -= delta_p
+                self.ad_budget -= delta_a
+        
+        # apply best found
+        changed = (self.price != best_price) or (self.ad_budget != best_ads)
+        self.price = best_price
+        self.ad_budget = best_ads
+        self.profit = best_profit
+        return changed
+    
     def __repr__(self):
         return f"Seller({self.name}: Price={self.price}, Ads={self.ad_budget}, Profit={self.profit:.2f}, Demand={self.demand:.2f})"
+
+
+
+
+
+def create_sellers_for_product(df: pd.DataFrame, description: str, max_sellers: int = 3) -> list[Seller]:
+    """
+    Given a Description, generate sellers based on unique prices.
+    Returns a list of Seller objects.
+    """
+    product_sales = df[df["Description"] == description]
+    unique_prices = sorted(product_sales["Price"].unique())
+    # [:max_sellers]  # limit sellers
+
+    sellers = [
+        Seller(
+            name=f"{description}_Seller_{i+1}",
+            cost=min(unique_prices)*0.4,          # cost as 40% of lowest price
+            price=p,
+            ad_budget=randint(5, 15)              # random ad budget
+        )
+        for i, p in enumerate(unique_prices)
+    ]
+    return sellers
+
+
+
+def get_multi_price_products(df:pd.DataFrame,n=5):
+
+    # Step 1: Count unique prices per product
+    price_variability = df.groupby("Description")["Price"].nunique().reset_index(name="unique_prices")
+
+    # Filter products with multiple price levels
+    multi_price_products = price_variability[price_variability["unique_prices"] > 1]
+
+    # Pick top n products with most sales variability (or you can choose more)
+    top_products = multi_price_products.head(n)["Description"].tolist()
+    return top_products

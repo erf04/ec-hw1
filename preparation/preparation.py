@@ -25,7 +25,7 @@ def load_data(file_path):
     
 
 
-def clean_data(df):
+def clean_data(df: pd.DataFrame):
     """
     Cleans the sales dataset by removing nulls, duplicates, and invalid values.
     """
@@ -46,7 +46,7 @@ def clean_data(df):
     return df
 
 
-def summarize_data(df):
+def summarize_data(df: pd.DataFrame):
     """
     Summarizes sales data by product: average price, total quantity sold, and number of unique customers.
     """
@@ -67,5 +67,4 @@ def summarize_data(df):
 
     print(f"✅ Summary created! {len(summary)} unique products.")
     return summary
-
 
