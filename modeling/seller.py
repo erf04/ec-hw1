@@ -107,7 +107,7 @@ class Seller:
 
 
 
-def create_sellers_for_product(df: pd.DataFrame, description: str, max_sellers: int = 3) -> list[Seller]:
+def create_sellers_for_product(df: pd.DataFrame, description: str, max_sellers: int = 2) -> list[Seller]:
     """
     Given a Description, generate sellers based on unique prices.
     Returns a list of Seller objects.
