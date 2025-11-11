@@ -1,125 +1,128 @@
-## 📘 گزارش نهایی پروژه شبیه‌سازی بازار رقابتی با در نظر گرفتن تأثیر شبکه اجتماعی
+## 📘 Final Report: Competitive Market Simulation Project Considering Social Network Influence
 
-**link** : https://github.com/erf04/ec-hw1.git
-### مقدمه
+**Link**: https://github.com/erf04/ec-hw1.git
 
-در این پروژه، هدف طراحی و شبیه‌سازی یک **بازار رقابتی ساده** بین چند فروشنده برای محصولات مشابه است. هر فروشنده باید قیمت و بودجه تبلیغاتی خود را به گونه‌ای تعیین کند که بیشترین سود را در حضور رقبا و تحت تأثیر روابط اجتماعی به دست آورد.
-برای تحلیل رفتار فروشندگان از **نظریه بازی‌ها (Game Theory)** استفاده شده و نقطه تعادل بازار از نوع **تعادل نش (Nash Equilibrium)** به‌صورت عددی به دست آمده است. همچنین، در ادامه اثرات شبکه اجتماعی (Social Network Influence) بر تصمیم‌گیری و سود فروشندگان نیز مورد بررسی قرار گرفته است.
+### Introduction
 
----
+In this project, the goal was to design and simulate a **simple competitive market** among several sellers offering similar products. Each seller must set their price and advertising budget in a way that maximizes profit in the presence of competitors and under the influence of social relationships.
 
-## ⚙️ مراحل انجام پروژه
-
-### 🔹 Task I – آماده‌سازی داده‌ها
-
-در این مرحله، داده‌های اولیه فروش از یک فایل شامل اطلاعات مربوط به محصولات، قیمت‌ها، تعداد فروش، کشور و شناسه مشتری استخراج شد.
-فرآیند پاک‌سازی داده‌ها شامل حذف رکوردهای تکراری، مقادیر گمشده و مقادیر منفی بود. سپس برای هر محصول، میانگین قیمت و تقاضا محاسبه شد تا به عنوان مبنای تعریف مدل مورد استفاده قرار گیرد.
+**Game Theory** was used to analyze seller behavior, and the market equilibrium point of **Nash Equilibrium** was obtained numerically. Additionally, the effects of social network influence on decision-making and seller profits were examined.
 
 ---
 
-### 🔹 Task II – تعریف مدل فروشندگان، تابع تقاضا و سود
+## ⚙️ Project Implementation Stages
 
-برای شبیه‌سازی رفتار فروشندگان، چند فروشنده فرضی تعریف شد که هرکدام دارای ویژگی‌های زیر هستند:
+### 🔹 Task I – Data Preparation
 
-| ویژگی             | توضیح                      |
-| ----------------- | -------------------------- |
-| `price`           | قیمت فروش کالا             |
-| `marketing`       | بودجه تبلیغات              |
-| `cost`            | هزینه تولید ثابت           |
-| `influence_score` | میزان نفوذ اجتماعی در شبکه |
-| `profit`          | تابع سود نهایی فروشنده     |
+In this stage, initial sales data was extracted from a file containing information about products, prices, sales quantities, countries, and customer IDs.
 
-تابع تقاضا برای هر فروشنده ( i ) به صورت زیر تعریف شد:
+The data cleaning process included removing duplicate records, missing values, and negative values. Then, for each product, the average price and demand were calculated to serve as the basis for defining the model.
 
-[
-D_i = base_demand + (\alpha \times m_i) + (\beta \times (p_i - p_j)) + (\gamma \times influence_score)
-]
+---
 
-که در آن:
+### 🔹 Task II – Defining Seller Model, Demand Function, and Profit
 
-* ( base_demand ): تقاضای پایه بدون تبلیغات یا اثر شبکه
-* ( \alpha ): ضریب تأثیر تبلیغات
-* ( \beta ): حساسیت تقاضا نسبت به اختلاف قیمت رقبا
-* ( \gamma ): تأثیر شبکه اجتماعی بر تقاضا
+To simulate seller behavior, several hypothetical sellers were defined, each with the following characteristics:
 
-تابع سود به شکل زیر مدل‌سازی شد:
+| Feature | Description |
+|---------|-------------|
+| `price` | Selling price of the product |
+| `marketing` | Advertising budget |
+| `cost` | Fixed production cost |
+| `influence_score` | Level of social influence in the network |
+| `profit` | Seller's final profit function |
 
-[
+The demand function for each seller (i) was defined as:
+
+\[
+D_i = base\_demand + (\alpha \times m_i) + (\beta \times (p_i - p_j)) + (\gamma \times influence\_score)
+\]
+
+Where:
+
+* \( base\_demand \): Base demand without advertising or network effects
+* \( \alpha \): Advertising impact coefficient
+* \( \beta \): Demand sensitivity to price differences with competitors
+* \( \gamma \): Social network influence on demand
+
+The profit function was modeled as:
+
+\[
 Profit_i = (p_i - cost) \times D_i - m_i
-]
+\]
 
 ---
 
-### 🔹 Task III – شبیه‌سازی بازی و یافتن تعادل نش
+### 🔹 Task III – Game Simulation and Finding Nash Equilibrium
 
-برای رسیدن به **تعادل نش**، از یک الگوریتم تکراری استفاده شد که در آن هر فروشنده در هر مرحله قیمت و بودجه تبلیغاتی خود را بر اساس رفتار رقبا به‌روزرسانی می‌کند.
-زمانی که هیچ فروشنده‌ای انگیزه‌ای برای تغییر استراتژی خود نداشت، حالت پایدار سیستم به عنوان **Nash Equilibrium** در نظر گرفته شد.
+To reach **Nash Equilibrium**, an iterative algorithm was used where each seller updates their price and advertising budget based on competitor behavior in each step.
 
-این شبیه‌سازی با تابع `simulate_nash` انجام شد که با تکرار زیاد (تا 10,000 iteration) همگرایی سیستم را بررسی می‌کند.
+When no seller had an incentive to change their strategy, the stable state of the system was considered as **Nash Equilibrium**.
 
----
-
-### 🔹 Task IV – افزودن اثر شبکه اجتماعی
-
-در این بخش، برای بررسی نقش شبکه‌های اجتماعی از کتابخانه **NetworkX** استفاده شد.
-
-1. ابتدا با تابع `build_seller_network` شبکه‌ای از فروشندگان ساخته شد که فروشندگان محصولات مشابه را به هم متصل می‌کند.
-2. سپس با تابع `compute_network_influence` میزان نفوذ هر گره (فروشنده) با استفاده از الگوریتم **PageRank** محاسبه شد.
-3. در نهایت با تابع `update_sellers_with_network_influence` این مقادیر به مدل فروشندگان اضافه شد تا در تابع تقاضا وارد شوند.
-
-سپس بازی مجدداً با در نظر گرفتن تأثیر شبکه اجتماعی اجرا شد تا تأثیر نفوذ اجتماعی بر قیمت، سود و تقاضا بررسی شود.
+This simulation was performed using the `simulate_nash` function, which checks system convergence through multiple iterations (up to 10,000 iterations).
 
 ---
 
-### 🔹 Task V – مصورسازی نتایج
+### 🔹 Task IV – Adding Social Network Effects
 
-برای تحلیل نتایج نهایی از کتابخانه‌های **Matplotlib** و **Seaborn** استفاده شد. دو نوع نمودار اصلی ترسیم گردید:
+In this section, the **NetworkX** library was used to examine the role of social networks.
 
-1. **نمودار تغییر سود نسبت به قیمت و تبلیغات** در حالت تعادل نش (دو بعدی یا سه‌بعدی):
-   این نمودار نشان می‌دهد که چگونه فروشنده با تغییر استراتژی تبلیغات و قیمت می‌تواند به ناحیه بیشینه سود برسد.
+1. First, a seller network was built using the `build_seller_network` function, connecting sellers of similar products.
+2. Then, using the `compute_network_influence` function, the influence level of each node (seller) was calculated using the **PageRank** algorithm.
+3. Finally, with the `update_sellers_with_network_influence` function, these values were added to the seller model to be incorporated into the demand function.
 
-2. **نمودار مقایسه تأثیر شبکه اجتماعی بر فروش و سود**:
-   در این بخش تفاوت بین مقادیر قبل و بعد از اعمال شبکه اجتماعی محاسبه و ترسیم شد:
-   [
+The game was then re-run considering social network influence to examine the impact of social influence on price, profit, and demand.
+
+---
+
+### 🔹 Task V – Results Visualization
+
+**Matplotlib** and **Seaborn** libraries were used to analyze the final results. Two main types of charts were created:
+
+1. **Profit change charts relative to price and advertising** at Nash Equilibrium (2D or 3D):
+   These charts show how sellers can reach the maximum profit area by changing advertising and pricing strategies.
+
+2. **Comparison charts of social network impact on sales and profit**:
+   In this section, differences between values before and after applying social network effects were calculated and plotted:
+   \[
    ΔPrice = Price_{After} - Price_{Before}
-   ]
-   [
+   \]
+   \[
    ΔProfit = Profit_{After} - Profit_{Before}
-   ]
-   [
+   \]
+   \[
    ΔDemand = Demand_{After} - Demand_{Before}
-   ]
-   نتایج نشان داد که افزایش ضریب تأثیر شبکه (( \gamma )) منجر به افزایش قابل توجهی در تقاضا و سود میانگین فروشندگان شد، به ویژه برای فروشندگانی که در مرکز شبکه قرار داشتند (influencers).
+   \]
+   Results showed that increasing the social network influence coefficient (\( \gamma \)) led to a significant increase in demand and average seller profits, especially for sellers positioned at the center of the network (influencers).
 
 ---
 
-## 📊 تحلیل نتایج
+## 📊 Results Analysis
 
-* در حالت بدون شبکه، فروشندگان تمایل داشتند با کاهش قیمت رقابت کنند تا تقاضا را افزایش دهند.
-* با اضافه شدن شبکه اجتماعی، فروشندگان با نفوذ بیشتر توانستند بدون کاهش قیمت، فروش بیشتری به دست آورند.
-* میانگین سود کلی سیستم در حضور اثر شبکه اجتماعی افزایش یافت.
-* نمودارها نشان دادند که وجود روابط اجتماعی باعث پایداری سریع‌تر و تعادل مطلوب‌تر بازار می‌شود.
-
----
-
-## 🧩 جمع‌بندی و نتیجه‌گیری
-
-در این پروژه، با استفاده از نظریه بازی‌ها، یک شبیه‌سازی از بازار رقابتی پیاده‌سازی شد که شامل عوامل زیر بود:
-
-* تعیین قیمت و بودجه تبلیغاتی به‌صورت پویا
-* تحلیل اثرات تعادل نش بین فروشندگان
-* مدل‌سازی شبکه اجتماعی و تأثیر آن بر رفتار بازار
-
-نتایج نشان می‌دهد که **تأثیر شبکه اجتماعی می‌تواند نقش کلیدی در بهبود سودآوری و پایداری بازار داشته باشد**. فروشندگانی که موقعیت مرکزی در شبکه دارند (influencers) قادرند با تبلیغات کمتر و قیمت‌های بالاتر نیز سود بیشتری کسب کنند.
+* In the no-network scenario, sellers tended to compete by lowering prices to increase demand.
+* With the addition of social networks, more influential sellers were able to achieve higher sales without reducing prices.
+* The overall system's average profit increased in the presence of social network effects.
+* Charts showed that social relationships lead to faster market stability and more favorable equilibrium.
 
 ---
 
-## 📁 خروجی‌های پروژه
+## 🧩 Summary and Conclusion
 
-* فایل داده‌های تمیزشده
-* اسکریپت شبیه‌سازی Nash (`simulate_nash.py`)
-* فایل تحلیل شبکه (`network.py`)
-* فایل مقایسه نتایج (`network_vs_no_network.xlsx`)
-* نمودارهای مصورسازی در پوشه `plots/`
+In this project, a competitive market simulation was implemented using game theory, including the following elements:
+
+* Dynamic determination of price and advertising budget
+* Analysis of Nash Equilibrium effects among sellers
+* Social network modeling and its impact on market behavior
+
+Results demonstrate that **social network influence can play a key role in improving profitability and market stability**. Sellers with central positions in the network (influencers) can achieve higher profits with less advertising and higher prices.
+
+---
+
+## 📁 Project Outputs
+
+* Cleaned data files
+* Nash simulation script (`simulate_nash.py`)
+* Network analysis file (`network.py`)
+* Results comparison file (`network_vs_no_network.xlsx`)
 
 ---
