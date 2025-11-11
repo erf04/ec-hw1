@@ -1,5 +1,6 @@
 from random import randint
 from modeling.seller import Seller
+import pandas as pd
 
 def simulate_nash(sellers: list[Seller], max_iterations=1000, epsilon=0.1):
     """
@@ -10,6 +11,8 @@ def simulate_nash(sellers: list[Seller], max_iterations=1000, epsilon=0.1):
     influence_scores = {
         s.name: getattr(s, "influence_score", randint(3, 8)) for s in sellers
     }
+
+    history = []
 
     # Initial computation
     for s in sellers:
@@ -35,9 +38,19 @@ def simulate_nash(sellers: list[Seller], max_iterations=1000, epsilon=0.1):
         for s in sellers:
             s.compute_demand(sellers, influence_scores[s.name])
             s.compute_profit()
+            # Record history
+            history.append({
+                "Iteration": iteration + 1,
+                "Seller": s.name,
+                "Price": s.price,
+                "AdBudget": s.ad_budget,
+                "Profit": s.profit
+            })
 
         if max_change < epsilon:
             print(f"Nash equilibrium reached at iteration {iteration + 1}")
             break
 
-    return sellers
+    history_df = pd.DataFrame(history)
+
+    return sellers,history_df

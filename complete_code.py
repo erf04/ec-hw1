@@ -335,12 +335,7 @@ def create_social_network(customer_ids):
 # ==============================================================================
 
 def plot_profit_landscape(seller_strategy, competitor_strategy, influence_score=0):
-    """
-    Creates a 2D heatmap showing a seller's profit for various
-    price/ad combinations, given a *fixed* strategy for the competitor.
-    
-    This helps visualize *why* the equilibrium is the best choice.
-    """
+
     print("--- Task V: Generating Profit Landscape Plot ---")
     
     # We will plot Seller A's profit landscape

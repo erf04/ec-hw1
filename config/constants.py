@@ -1,5 +1,6 @@
-COST = 10             # constant production cost per unit
-ALPHA = 0.5           # advertising effect on demand
-BETA = -2.0           # price difference effect
-GAMMA = 1.0           # social influence effect
-BASE_DEMAND = 50      # base demand when no ads or influence
+# More stable constants
+COST = 10
+ALPHA = 0.1           # Reduced advertising effect 
+BETA = -0.5           # Reduced price sensitivity (less negative)
+GAMMA = 0.5           # Reduced influence effect
+BASE_DEMAND = 50
